@@ -1,7 +1,7 @@
 import cookieHelper from 'alexa-cookie2';
 import { createAmazonClient } from './amazon_client.mjs';
-import { endpointQuery, monitorsFrom, readingsFrom, sessionRegion } from './amazon.mjs';
-import { capabilitiesFrom } from './capabilities.mjs';
+import { endpointQuery, monitorsFrom, sessionRegion } from './amazon.mjs';
+import { readMonitor } from './monitor.mjs';
 import { sealSession, openSession } from './session.mjs';
 import { siteClient } from './site-client.mjs';
 const {SITE_URL,SITE_BEARER,COLLECTOR_TOKEN,SESSION_KEY}=process.env;
@@ -22,14 +22,19 @@ try {
     await call('/api/collector/session',sealSession(session,SESSION_KEY));
   }
   errorStage='amazon';
-  const amazon=createAmazonClient(()=>session);
+  let amazon=createAmazonClient(()=>session);
   const devices=monitorsFrom(await amazon('/nexus/v1/graphql',{query:endpointQuery}));
   if(!devices.length)throw new Error('No monitor found.');
   const monitors=[];
   for(const device of devices) {
     try {
-      const state=await amazon('/api/phoenix/state',{stateRequests:[{entityId:device.id,entityType:'APPLIANCE'}]});
-      monitors.push({id:device.id,name:device.name,readings:readingsFrom(state,device.id),capabilities:capabilitiesFrom(state,device.id)});
+      const options={report:d=>console.log('Monitor retry diagnostics: '+JSON.stringify(d))};
+      try {monitors.push(await readMonitor(amazon,device,options));}
+      catch(error) {
+        if(error.message!=='session_rejected')throw error;
+        session=await refresh(session);await call('/api/collector/session',sealSession(session,SESSION_KEY));
+        amazon=createAmazonClient(()=>session);monitors.push(await readMonitor(amazon,device,options));
+      }
     } catch {monitors.push({id:device.id,name:device.name,readings:[],error:'Monitor readings unavailable.'});}
   }
   errorStage='storage';

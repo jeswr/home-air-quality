@@ -16,6 +16,8 @@ The session grants account access beyond individual monitor readings because Ama
 
 Readings are deduplicated by monitor, metric and Amazon measurement timestamp, preserving original precision. Stale or unreliable measurement times are kept in the table and excluded from the graph. Existing local data is imported in bounded, retry-safe batches and remains on the Mac. No historical Amazon API series has been imported.
 
+Each monitor request has up to three attempts with short delays. A rejected account session triggers one refresh and saves the updated encrypted session. If collection still fails, the previous readings are preserved, an unavailable attempt is logged, and the GitHub job fails so its normal failure notification settings apply. Diagnostic output contains only fixed reason codes and response-shape counts, never Amazon response bodies or identifiers. An unpatched upstream glob-parser issue remains in build/proxy tooling; see [SECURITY.md](SECURITY.md) for its scoped assessment.
+
 ## Commands
 
 - `node --test tests/*.test.mjs collector/*.test.mjs`
