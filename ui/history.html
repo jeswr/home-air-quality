@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sensor history · Indoor air quality</title><link rel="stylesheet" href="/style.css"><script type="module" src="/history-page.js"></script></head>
+<body><a class="skip-link" href="#main-content">Skip to main content</a><main id="main-content" tabindex="-1">
+  <nav aria-label="Dashboard"><a href="/">Live readings</a><a href="/history" aria-current="page">Sensor history</a></nav>
+  <header><p class="eyebrow">YOUR HOME · OVER TIME</p><h1>Your air, over time.</h1><p class="intro">Explore the readings saved privately in the cloud.</p></header>
+  <form id="filters" class="history-filters" aria-label="History filters">
+    <div><label for="sensor">Sensor</label><select id="sensor" name="metric"><option value="voc">VOC index</option><option value="iaq">Air quality score</option><option value="pm25">PM2.5</option><option value="pm10">PM10</option><option value="co">Carbon monoxide</option><option value="temperature">Temperature</option><option value="humidity">Humidity</option></select></div>
+    <div><label for="range">Time range</label><select id="range"><option value="1">Last hour</option><option value="24" selected>Last 24 hours</option><option value="168">Last 7 days</option><option value="720">Last 30 days</option><option value="all">All saved history</option></select></div>
+    <button type="submit" id="refresh-history">Refresh history</button>
+  </form>
+  <p id="history-message" role="status">Loading saved readings…</p>
+  <section class="chart-panel" aria-labelledby="chart-heading">
+    <h2 id="chart-heading">VOC index</h2>
+    <p id="chart-summary" class="muted"></p>
+    <div id="history-chart"></div>
+    <p id="chart-note" class="muted">Chart gaps indicate missing data. Readings with unknown or unreliable measurement times appear only in the table.</p>
+  </section>
+  <section aria-labelledby="saved-heading" class="saved-section">
+    <h2 id="saved-heading">Saved readings</h2>
+    <p class="muted">Newest saved first. Measurement and collection times are shown in your browser’s local time zone.</p>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Saved sensor readings">
+      <table><caption id="table-caption">VOC index readings</caption><thead><tr><th scope="col">Measured</th><th scope="col">Value</th><th scope="col">Monitor</th><th scope="col">Collected</th><th scope="col">Time quality</th></tr></thead><tbody id="history-rows"></tbody></table>
+    </div>
+    <button type="button" id="older" hidden>Load older readings</button>
+  </section>
+  <section aria-labelledby="export-heading" class="saved-section"><h2 id="export-heading">Keep a copy</h2><p><a href="/api/history.csv" download>Download all readings (CSV)</a> · <a href="/api/history/attempts.csv" download>Download collection log (CSV)</a> · <a href="/api/history/capabilities.csv" download>Download API source values (CSV)</a></p><p class="muted">Includes imported local history. Cloud collection is scheduled every 30 minutes, even when your Mac is off. Scheduled runs can be delayed; gaps show missing data. Amazon provides no unit for PM10.</p></section>
+  <footer><span id="logging-summary">Checking logging…</span><span>Saved privately in the cloud · Refreshes every minute</span></footer>
+</main></body></html>

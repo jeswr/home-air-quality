@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Indoor air quality</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body><a class="skip-link" href="#main-content">Skip to main content</a><main id="main-content" tabindex="-1">
+  <nav aria-label="Dashboard"><a href="/" aria-current="page">Live readings</a><a href="/history">Sensor history</a></nav>
+  <header><p class="eyebrow">YOUR HOME · AIR QUALITY</p><h1>A clearer picture<br>of your indoor air.</h1><p class="intro">Your Amazon monitor, wherever you are.</p></header>
+  <section class="connection" aria-labelledby="connect-title">
+    <div><h2 id="connect-title">Cloud collection</h2><p id="status" role="status">Checking connection…</p></div>
+  </section>
+  <p class="muted">Private cloud dashboard. Your existing Amazon session is encrypted; no Amazon password is entered here.</p>
+  <section id="monitors" aria-label="Monitor readings"></section>
+  <section id="empty"><div class="empty-icon" aria-hidden="true">◌</div><h2>Ready for your readings</h2><p>Temperature, humidity, particles, VOCs, carbon monoxide<br>and your overall air quality score will appear here.</p><p class="muted">No monitor data has been received yet.</p></section>
+  <section aria-labelledby="history-title"><h2 id="history-title">Reading history</h2><p id="history-status">Checking cloud logging…</p><p><a href="/api/history.csv" download>Download readings (CSV)</a> · <a href="/api/history/attempts.csv" download>Download collection log (CSV)</a> · <a href="/api/history/capabilities.csv" download>Download API source values (CSV)</a></p><p class="muted">Cloud collection is scheduled every 30 minutes. It continues while your Mac is off, provided the monitor stays powered and online. Measurement times are saved in UTC. Earlier Amazon history is not imported. Source values preserve Amazon's reported precision; they are not raw sensor voltages. Amazon labels the extra channel PM10 but does not provide its unit.</p></section>
+  <footer><span id="updated">Waiting for connection</span><span>Cloud collection · Scheduled every 30 minutes</span></footer>
+</main></body></html>
