@@ -2,7 +2,7 @@
 
 The Mac dashboard has a cloud companion at https://home-air-quality.jmwright-045.chatgpt.site. It is owner-private and requires ChatGPT sign-in. A Sites-hosted D1 database stores the measurements, collection log, and sanitized Amazon source values. The Mac logger continues independently.
 
-GitHub Actions polls Amazon at minutes 17 and 47 each hour (UTC). The runner needs no connection to the Mac. The air quality monitor must remain powered, connected to Wi-Fi, and registered to the Amazon account. GitHub can delay or drop scheduled jobs; collection cannot be guaranteed and gaps are visible in history. The UI marks collection overdue after 65 minutes. This is an unofficial Amazon integration and may require sign-in again if Amazon revokes its session.
+GitHub Actions polls Amazon at minutes 7, 17, 27, 37, 47 and 57 each hour (UTC). The runner needs no connection to the Mac. The air quality monitor must remain powered, connected to Wi-Fi, and registered to the Amazon account. GitHub can delay or drop scheduled jobs; collection cannot be guaranteed and gaps are visible in history. The UI marks collection overdue after 25 minutes. This is an unofficial Amazon integration and may require sign-in again if Amazon revokes its session.
 
 ## Security
 
@@ -12,7 +12,7 @@ The session grants account access beyond individual monitor readings because Ama
 
 ## Collection and CI
 
-`collect.yml` installs only the small collector dependency set and runs for one collection per job. At 30-minute intervals there are about 1,440–1,488 jobs/month. GitHub rounds each job up to a whole minute, so typical usage starts at that many minutes; longer jobs and other repositories consume more. Account quotas and billing still apply. CI tests and builds source on push/PR; it does not redeploy the Site. Deployments follow the Sites versioning workflow and use the matching source commit.
+`collect.yml` installs only the small collector dependency set and runs for one collection per job. At 10-minute intervals there are about 4,320–4,464 jobs per 30–31-day month. GitHub rounds each job up to a whole minute, so typical usage starts at that many minutes; longer jobs and other repositories consume more. Account quotas and billing still apply. CI tests and builds source on push/PR; it does not redeploy the Site. Deployments follow the Sites versioning workflow and use the matching source commit.
 
 Readings are deduplicated by monitor, metric and Amazon measurement timestamp, preserving original precision. Stale or unreliable measurement times are kept in the table and excluded from the graph. Existing local data is imported in bounded, retry-safe batches and remains on the Mac. No historical Amazon API series has been imported.
 

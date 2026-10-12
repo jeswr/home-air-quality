@@ -4,7 +4,7 @@ export function segmentsFor(points, bucketSeconds) {
     const segment = segments.at(-1);
     const previous = segment?.at(-1);
     // Do not draw a line through missing collections, even on wider ranges.
-    if (!previous || Date.parse(point.firstAt) - Date.parse(previous.lastAt) > Math.max(65 * 60000, bucketSeconds * 2000)) {
+    if (!previous || Date.parse(point.firstAt) - Date.parse(previous.lastAt) > Math.max(25 * 60000, bucketSeconds * 2000)) {
       segments.push([point]);
     } else segment.push(point);
   }
