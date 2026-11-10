@@ -65,3 +65,14 @@ test('cloud credentials are restricted to the private Site origin and redirects 
   let options;const call=siteClient({siteUrl:'https://home.test.chatgpt.site',siteBearer:'secret',collectorToken:'writer'},async(url,opts)=>{options=opts;return Response.json({saved:true});});
   assert.deepEqual(await call('/api/collector',{}),{saved:true});assert.equal(options.redirect,'error');assert.equal(options.headers.Authorization,'Bearer writer');
 });
+
+test('room aliases relabel existing charts, table and CSV while retaining immutable device history',async()=>{
+ const db=database(),h=new CloudHistory(db,(id,fallback)=>id==='private-id'?'Living room':fallback);
+ await h.record(sample);
+ const result=await h.query({metric:'voc',to:at});
+ assert.equal(result.rows[0].monitor,'Living room');assert.equal(result.series[0].monitor,'Living room');
+ assert.ok(!JSON.stringify(result).includes('private-id'));
+ assert.equal(db.sql.prepare('SELECT monitor FROM measurements LIMIT 1').get().monitor,'Bedroom');
+ const text=await new Response(h.csv('measurements')).text();assert.match(text,/Living room/);assert.ok(!text.includes('private-id'));
+ assert.equal((await h.status()).measurements,6);db.sql.close();
+});

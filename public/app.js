@@ -22,11 +22,17 @@ async function update() {
       const section = element('section', '', 'monitor');
       section.append(element('h2', monitor.name));
       if (monitor.error) section.append(element('p', monitor.error, 'error'));
+      const particles = element('div', '', 'cards particle-cards');
       const cards = element('div', '', 'cards');
-      for (const reading of monitor.readings) {
-        const card = element('article', '', 'card');
+      const readings = monitor.readings || [];
+      const ordered = ['pm25','pm10'].map(key => readings.find(r=>r.key===key) || {key,label:key==='pm25'?'PM2.5':'PM10',unit:'not available'})
+        .concat(readings.filter(r=>!['pm25','pm10'].includes(r.key)));
+      for (const reading of ordered) {
+        const particle = ['pm25','pm10'].includes(reading.key);
+        const card = element('article', '', particle ? 'card particle' : 'card');
+        card.dataset.metric = reading.key;
         card.append(element('h3', reading.label));
-        const value = element('span', new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 }).format(reading.value), 'value');
+        const value = element('span', typeof reading.value === 'number' ? new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 }).format(reading.value) : '—', 'value');
         card.append(value, element('span', reading.unit, 'unit'));
         if (reading.observedAt) {
           const date = new Date(reading.observedAt);
@@ -35,8 +41,11 @@ async function update() {
         const historyLink = element('a', `View ${reading.label} history`, 'sample');
         historyLink.href = '/history?metric=' + encodeURIComponent(reading.key);
         card.append(historyLink);
-        cards.append(card);
+        (particle ? particles : cards).append(card);
       }
+      section.append(particles);
+      const pm10 = readings.find(r=>r.key==='pm10');
+      if (pm10 && (!pm10.unit || pm10.unit === 'unit not provided')) section.append(element('p','PM10 is reported without a unit. A combined particle maximum cannot be verified.','particle-note'));
       section.append(cards); monitors.append(section);
     }
     document.querySelector('#updated').textContent = data.fetchedAt ? 'Last fetched ' + new Date(data.fetchedAt).toLocaleTimeString('en-GB') : 'Waiting for connection';

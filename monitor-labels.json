@@ -1,0 +1,14 @@
+{
+  "a63f4ef737618d85c714869458b25ffa3da22157b89929dce0b1fd3f4c51acfb": {
+    "name": "Living room",
+    "order": 1
+  },
+  "0b9f14569cef2022629f37dfbf7a9729c166f5cdf8be9bcc8b174637ddb5f7ed": {
+    "name": "Bedroom",
+    "order": 2
+  },
+  "57b47d1f278c08da4197c7d78e871f22f965e76f2d3bedb12f85a3b46cd2354a": {
+    "name": "Hall",
+    "order": 3
+  }
+}

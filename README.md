@@ -30,3 +30,11 @@ Each monitor request has up to three attempts with short delays. A rejected acco
 ## Multiple monitors
 
 Each cloud run rediscovers every supported Amazon monitor on the same account and collects it independently. The live page shows a section per monitor; history charts keep separate series and the table/export includes monitor names. Deduplication uses device identity, metric and source time, preserving the original monitor’s history when additional devices are paired. VOC remains a unitless index. The existing public audience and authenticated collector endpoints are unchanged.
+
+## Room labels and particles
+
+The three verified device identities are pinned in `monitor-labels.json` using SHA-256 digests, ordered Living room, Bedroom, Hall. These names were read from Alexa groups on 10 November 2026; Hall is the app’s name for the third monitor. Discovery response order and generic device names cannot swap rooms. Existing samples keep their original device identities and recorded names; historical charts, rows and CSV exports resolve the current room label without rewriting samples.
+
+PM2.5 and PM10 are displayed first in prominent cards. Live capability inspection on all three devices reports PM2.5 in `Alexa.Unit.Density.MicroGramsPerCubicMeter` and labels instance 7 PM10 but leaves its unit blank. The sensor-module UART documentation does not establish the finished device’s cloud-channel units. No PM10 unit or valid combined maximum is inferred. VOC remains an index.
+
+The Mac menu-bar title uses the requested `42 (12) · 35 (9) · 48 (15)` layout in fixed room order, using real fresh values. With the currently available metadata, parentheses contain **PM2.5 only in µg/m³**, explicitly identified in the dropdown and tooltip, rather than a claimed maximum. A true maximum is used only when both fresh particle readings carry recognized mass-concentration units; absent, stale or invalid values show a dash.

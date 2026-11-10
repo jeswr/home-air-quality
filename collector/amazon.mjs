@@ -1,3 +1,4 @@
+import { labelMonitors } from './monitor-labels.mjs';
 // Read-only endpoints used by alexa-remote and alexa-exporter; no public API exists.
 export const endpointQuery = `query Endpoints { endpoints { items {
   endpointId friendlyName displayCategories { primary { value } }
@@ -34,7 +35,7 @@ export function monitorsFrom(payload) {
       id: legacy.applianceId, name: item.friendlyName || legacy.friendlyName || 'Air quality monitor'
     });
   }
-  return [...found.values()];
+  return labelMonitors([...found.values()]);
 }
 
 const metrics = {
