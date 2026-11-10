@@ -45,7 +45,7 @@ async function update() {
       }
       section.append(particles);
       const pm10 = readings.find(r=>r.key==='pm10');
-      if (pm10 && (!pm10.unit || pm10.unit === 'unit not provided')) section.append(element('p','PM10 is reported without a unit. A combined particle maximum cannot be verified.','particle-note'));
+      if (pm10 && (!pm10.unit || pm10.unit === 'unit not provided')) section.append(element('p','PM10 is reported without a unit. The menu-bar raw maximum assumes equivalent units; it is not a verified concentration.','particle-note'));
       section.append(cards); monitors.append(section);
     }
     document.querySelector('#updated').textContent = data.fetchedAt ? 'Last fetched ' + new Date(data.fetchedAt).toLocaleTimeString('en-GB') : 'Waiting for connection';
