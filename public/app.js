@@ -15,7 +15,7 @@ async function update() {
     const data = await response.json();
     const hasReadings = data.monitors?.some(m => m.readings.length);
     const outdated = data.fetchedAt && Date.now() - Date.parse(data.fetchedAt) > 25 * 60000;
-    status.textContent = (outdated ? 'Collection overdue. Showing previous saved readings. ' : '') + (data.error || data.message || (hasReadings ? 'Latest saved readings · cloud collection every 10 minutes' : 'Connected to Amazon · waiting for sensor readings')); 
+    status.textContent = (outdated ? 'Collection overdue. Showing previous saved readings. ' : '') + (data.error || data.message || (hasReadings ? `${data.monitors.length} monitor${data.monitors.length === 1 ? '' : 's'} · cloud collection every 10 minutes` : 'Connected to Amazon · waiting for sensor readings'));
     document.querySelector('#empty').hidden = Boolean(hasReadings);
     monitors.replaceChildren();
     for (const monitor of data.monitors || []) {

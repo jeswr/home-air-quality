@@ -28,6 +28,26 @@ test('failed collections preserve latest readings and are recorded as unavailabl
   await h.record({connected:true,fetchedAt:'2026-10-12T08:30:00Z',monitors:[],error:'Failure'});
   assert.equal((await h.state('latest')).fetchedAt,at);assert.equal((await h.status()).lastStatus,'unavailable');db.sql.close();
 });
+test('three monitors keep separate histories and a failed device cannot overwrite another',async()=>{
+  const db=database(),h=new CloudHistory(db);await h.record(sample);
+  const next='2026-10-12T08:10:00.000Z';
+  const monitors=[0,1,2].map(n=>({...sample.monitors[0],id:n===0?'private-id':`private-new-${n}`,name:`Room ${n+1}`,
+    readings:sample.monitors[0].readings.map(r=>({...r,value:r.key==='voc'?n*20:r.value,observedAt:next}))}));
+  assert.equal(await h.record({connected:true,fetchedAt:next,monitors}),18);
+  assert.equal(await h.record({connected:true,fetchedAt:next,monitors}),0);
+  const history=await h.query({metric:'voc',to:next});
+  assert.equal(history.records,4);assert.equal(history.series.length,3);
+  assert.equal((await h.state('latest')).monitors.length,3);
+  assert.equal((await h.status()).measurements,24);
+  assert.equal(db.sql.prepare('SELECT count(DISTINCT monitor_id) AS n FROM measurements').get().n,3);
+  assert.ok(!JSON.stringify(history).includes('private-new'));
+  const partial=monitors.map((m,n)=>n===1?{...m,readings:[],error:'Unavailable'}:m);
+  await h.record({connected:true,fetchedAt:'2026-10-12T08:11:00.000Z',monitors:partial});
+  assert.equal((await h.status()).lastStatus,'partial');
+  assert.equal((await h.query({metric:'voc',to:next})).records,4);
+  assert.equal((await h.state('latest')).monitors[2].readings.find(r=>r.key==='voc').value,40);
+  db.sql.close();
+});
 test('invalid batches are rejected without partial writes; missing sample times deduplicate on retry',async()=>{
   const db=database(),h=new CloudHistory(db);
   const row={monitor_id:'x',monitor:'room',metric:'voc',value:1,unit:'index',observed_at:null,fetched_at:at,quality:'time_unknown'};

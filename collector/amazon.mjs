@@ -50,7 +50,7 @@ const metrics = {
 
 export function readingsFrom(payload, id) {
   const state = payload?.deviceStates?.find(s => s.entity?.entityId === id || s.entityId === id)
-    ?? (payload?.deviceStates?.length === 1 ? payload.deviceStates[0] : undefined);
+    ?? (payload?.deviceStates?.length === 1 && !(payload.deviceStates[0]?.entity?.entityId || payload.deviceStates[0]?.entityId) ? payload.deviceStates[0] : undefined);
   if (payload?.errors?.length || state?.error || !Array.isArray(state?.capabilityStates)) {
     throw new Error('Amazon could not return readings. Check that the monitor is online.');
   }

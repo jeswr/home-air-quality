@@ -46,3 +46,13 @@ test('reads the monitor temperature capability without an instance identifier', 
   payload.deviceStates[0].capabilityStates[0].value = {value: 68, scale: 'FAHRENHEIT'};
   assert.equal(readingsFrom(payload, 'monitor-1')[0].value, 20);
 });
+
+test('all three monitors are discovered and readings cannot cross device identities', () => {
+  const items = [1,2,3].map(n=>({friendlyName:`Room ${n}`,displayCategories:{primary:{value:'AIR_QUALITY_MONITOR'}},legacyAppliance:{applianceId:`monitor-${n}`}}));
+  assert.equal(monitorsFrom({data:{endpoints:{items:[...items,items[0]]}}}).length,3);
+  const state = n=>({entityId:`monitor-${n}`,capabilityStates:[{instance:'5',value:n*10}]});
+  const payload={deviceStates:[state(3),state(1),state(2)]};
+  for(const n of [1,2,3])assert.equal(readingsFrom(payload,`monitor-${n}`)[0].value,n*10);
+  assert.throws(()=>readingsFrom({deviceStates:[state(2)]},'monitor-1'));
+  assert.equal(readingsFrom({deviceStates:[{capabilityStates:state(1).capabilityStates}]},'monitor-1')[0].value,10);
+});

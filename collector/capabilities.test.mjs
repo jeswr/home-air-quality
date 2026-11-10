@@ -34,3 +34,9 @@ test('reads declared PM10 label, range and absent unit without saving arbitrary 
 test('unavailable capability state cannot look like a successful inspection', () => {
   assert.throws(() => capabilitiesFrom({deviceStates: [{error: 'offline'}]}, 'device'));
 });
+
+test('capability samples cannot be attributed to another monitor', () => {
+  const state={entityId:'other-monitor',capabilityStates:[{namespace:'Alexa.RangeController',instance:'5',name:'rangeValue',value:45}]};
+  assert.throws(()=>capabilitiesFrom({deviceStates:[state]},'original-monitor'));
+  assert.equal(capabilitiesFrom({deviceStates:[state]},'other-monitor')[0].value,45);
+});

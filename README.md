@@ -26,3 +26,7 @@ Each monitor request has up to three attempts with short delays. A rejected acco
 - `node collector/run.mjs` with the three secret variables and `SITE_URL` configured
 
 `collector/bootstrap.mjs` takes JSON on stdin with site access, writer and encryption keys, repository name, and paths to the existing local session and history database. It sets GitHub secrets and imports existing history without writing or printing credentials. Only run on a trusted Mac, against this owner-private Site. Do not pass secrets as shell arguments.
+
+## Multiple monitors
+
+Each cloud run rediscovers every supported Amazon monitor on the same account and collects it independently. The live page shows a section per monitor; history charts keep separate series and the table/export includes monitor names. Deduplication uses device identity, metric and source time, preserving the original monitor’s history when additional devices are paired. VOC remains a unitless index. The existing public audience and authenticated collector endpoints are unchanged.

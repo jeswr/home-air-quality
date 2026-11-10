@@ -15,7 +15,7 @@ const scalarValue = value => {
 // and arbitrary string values that could contain personal information.
 export function capabilitiesFrom(payload, id) {
   const state = payload?.deviceStates?.find(item => item.entity?.entityId === id || item.entityId === id)
-    ?? (payload?.deviceStates?.length === 1 ? payload.deviceStates[0] : undefined);
+    ?? (payload?.deviceStates?.length === 1 && !(payload.deviceStates[0]?.entity?.entityId || payload.deviceStates[0]?.entityId) ? payload.deviceStates[0] : undefined);
   if (payload?.errors?.length || state?.error || !Array.isArray(state?.capabilityStates)) {
     throw new Error('Amazon could not return monitor capabilities.');
   }
